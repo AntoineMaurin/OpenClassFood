@@ -5,6 +5,9 @@
 """Display options"""
 
 print("\nBonjour ! Bienvenue sur OpenFoodRooms !\n")
+
+print("Attention, certains produits sont incomplets")
+print("Leurs données ne sont donc pas fiables.\n")
 print("Choisissez une option en entrant le nombre associé à celle-ci\n")
 
 """Choice of one item"""
