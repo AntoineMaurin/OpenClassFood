@@ -1,0 +1,10 @@
+https://fr.openfoodfacts.org/categorie/citronnades.json
+https://fr.openfoodfacts.org/categorie/chocolats-noirs-aux-feves-de-cacao.json
+https://fr.openfoodfacts.org/categorie/pizzas-a-la-bolognaise.json
+https://fr.openfoodfacts.org/categorie/liegeois.json
+https://fr.openfoodfacts.org/categorie/yaourts-aromatises.json
+https://fr.openfoodfacts.org/categorie/steaks-de-boeuf.json
+https://fr.openfoodfacts.org/categorie/cereales-pour-petit-dejeuner.json
+https://fr.openfoodfacts.org/categorie/legumineuses.json
+https://fr.openfoodfacts.org/categorie/speculoos.json
+https://fr.openfoodfacts.org/categorie/chips-de-pommes-de-terre.json

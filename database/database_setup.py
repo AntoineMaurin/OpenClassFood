@@ -3,23 +3,39 @@ import mysql.connector
 from tables import TABLES
 from mysql.connector import errorcode
 
-
 class DatabaseSetup:
 
-    def __init__(self, host, user, password):
+    def __init__(self):
+        pass
+
+    def connect(self, host, user, password):
         try:
             self.db = mysql.connector.connect(host=host,
                                      user=user,
                                      passwd=password)
             self.cursor = self.db.cursor()
         except:
-            print("Something went wrong")
+            print("Something went wrong in the connexion process")
             self.db.close()
 
-    def show_databases(self):
-        self.cursor.execute("SHOW DATABASES")
-        for db in self.cursor:
-            print(db)
+    def use_db(self, name):
+        try:
+            self.cursor.execute("USE {}".format(name))
+            print("using database {}".format(name))
+        except:
+            print("Can not USE purbeurre database")
+
+    def create_database(self, name):
+        try:
+            self.cursor.execute("DROP DATABASE IF EXISTS purbeurre")
+            print("database dropped")
+            self.cursor.execute("CREATE DATABASE purbeurre CHARACTER SET 'utf8'")
+            print("database created successfully !")
+            self.use_db(name)
+            self.create_tables()
+            print("all tables created successfully !")
+        except mysql.connector.Error as err:
+            print(err.msg)
 
     def does_db_exist(self, name):
         databases = []
@@ -28,6 +44,7 @@ class DatabaseSetup:
             db = db[0]
             databases.append(db)
 
+        print('databases : ', databases)
         return name in databases
 
     def does_tb_exist(self, table):
@@ -37,16 +54,8 @@ class DatabaseSetup:
             tb = tb[0]
             tables.append(tb)
 
+        print('tables : ', tables)
         return table in tables
-
-    def create_database(self, name):
-        if self.does_db_exist(name):
-            print("the database already exists")
-        else:
-            print("the database don't exist, let's create it")
-            self.cursor.execute("CREATE DATABASE purbeurre CHARACTER SET 'utf8'")
-            self.create_tables()
-        self.use_db(name)
 
     def create_tables(self):
         for table_name in TABLES:
@@ -88,15 +97,3 @@ class DatabaseSetup:
             )
         except mysql.connector.Error as err:
             print(err.msg)
-
-    def show_tables(self):
-        self.cursor.execute("SHOW TABLES")
-        for tb in self.cursor:
-            print('table : ', tb)
-
-    def use_db(self, name):
-        try:
-            self.cursor.execute("USE {}".format(name))
-            print("using database {}".format(name))
-        except:
-            print("Can not USE purbeurre database")
