@@ -6,7 +6,7 @@ from mysql.connector import errorcode
 
 sys.path.append('../API')
 
-from data_from_api import *
+from data_from_api import DataFromApi
 
 class DatabasePopulating:
     def __init__(self):

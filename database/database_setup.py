@@ -1,6 +1,6 @@
 import mysql.connector
 
-from tables import TABLES
+from database.tables import TABLES
 from mysql.connector import errorcode
 
 class DatabaseSetup:
@@ -12,7 +12,8 @@ class DatabaseSetup:
         try:
             self.db = mysql.connector.connect(host=host,
                                      user=user,
-                                     passwd=password)
+                                     passwd=password,
+                                     buffered=True)
             self.cursor = self.db.cursor()
         except:
             print("Something went wrong in the connexion process")
@@ -21,7 +22,6 @@ class DatabaseSetup:
     def use_db(self, name):
         try:
             self.cursor.execute("USE {}".format(name))
-            print("using database {}".format(name))
         except:
             print("Can not USE purbeurre database")
 

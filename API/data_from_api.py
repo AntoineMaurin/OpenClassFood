@@ -2,12 +2,12 @@ import requests
 import json
 import random
 
-from category_and_products import Category, Product
+from API.category_and_products import Category, Product
 
 class DataFromApi:
 
     def __init__(self):
-        urls_file = open("urls.txt", "r")
+        urls_file = open("API/urls.txt", "r")
         self.urls = [(line.strip()) for line in urls_file.readlines()]
 
         self.categories = []
