@@ -1,6 +1,9 @@
 import requests
 import json
 import random
+import sys
+
+sys.path.append("")
 
 from API.category_and_products import Category, Product
 

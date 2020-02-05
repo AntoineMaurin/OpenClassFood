@@ -1,8 +1,8 @@
 import sys
 
-sys.path.append('../database')
+sys.path.append("")
 
-from database_setup import DatabaseSetup
+from database.database_setup import DatabaseSetup
 
 setup = DatabaseSetup()
 

@@ -73,13 +73,15 @@ class DatabaseInteraction:
                                         ))
             self.dbsetup.cursor.execute(insert_research)
             self.dbsetup.db.commit()
-            print("Added successfully in database !")
+            print("\nRecherche enregistrée !")
         except mysql.connector.Error as err:
             print(err.msg)
 
     def display_researches(self):
         full_request = ("SELECT recherche.date, recherche.id_aliment, "
                         "recherche.id_substitut, aliment.nom "
+                        # "aliment.nutriscore, aliment.description, "
+                        # "aliment.magasin, aliment.lien_openfoodfacts "
                         "FROM aliment INNER JOIN recherche "
                         "ON recherche.id_aliment = aliment.id "
                         "OR recherche.id_substitut = aliment.id")

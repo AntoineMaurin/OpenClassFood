@@ -1,8 +1,8 @@
 import sys
 
-sys.path.append('../database')
+sys.path.append("")
 
-from database_populating import DatabasePopulating
+from database.database_populating import DatabasePopulating
 
 pop = DatabasePopulating()
 

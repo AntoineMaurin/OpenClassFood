@@ -1,12 +1,12 @@
 import sys
 import mysql.connector
 
-from database_setup import DatabaseSetup
+from database.database_setup import DatabaseSetup
 from mysql.connector import errorcode
 
-sys.path.append('../API')
+sys.path.append("..")
 
-from data_from_api import DataFromApi
+from API.data_from_api import DataFromApi
 
 class DatabasePopulating:
     def __init__(self):

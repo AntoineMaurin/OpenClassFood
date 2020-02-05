@@ -6,15 +6,12 @@ from database.database_interaction import DatabaseInteraction
 #Database connexion
 interact = DatabaseInteraction()
 
-print("\nBonjour ! Bienvenue sur OpenFoodRooms !\n")
-
-# Display informations
-print("Attention, certains produits sont incomplets")
-print("Leurs données ne sont donc pas fiables.\n")
-print("Choisissez une option en entrant le nombre associé à celle-ci\n")
-
-# Display options
-print(" 1. Choisir une catégorie d'aliment que vous souhaitez remplacer\n",
+# Display informations and options choice
+print("\nBonjour ! Bienvenue sur OpenFoodRooms !\n"
+      "Attention, certains produits sont incomplets "
+      "Leurs données ne sont donc pas fiables.\n"
+      "\nChoisissez une option en entrant le nombre associé à celle-ci\n"
+      "\n1. Choisir une catégorie d'aliment que vous souhaitez remplacer\n"
       "2. Retrouver mes aliments substitués\n")
 
 # This function makes sure the input is convertible to an int and
