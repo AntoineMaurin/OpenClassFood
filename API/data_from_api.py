@@ -1,11 +1,12 @@
 import requests
 import json
-import random
 import sys
 
-sys.path.append("")
+sys.path.append("..")
 
-from API.category_and_products import Category, Product
+from database.database_populating import DatabasePopulating
+from models.category import Category
+from models.product import Product
 
 class DataFromApi:
 
@@ -13,6 +14,7 @@ class DataFromApi:
         urls_file = open("API/urls.txt", "r")
         self.urls = [(line.strip()) for line in urls_file.readlines()]
 
+        self.pop = DatabasePopulating()
         self.categories = []
 
     def request(self):
@@ -50,35 +52,29 @@ class DataFromApi:
                     break
 
                 for elt in data:
-                    try :
-                        name = (elt["product_name_fr"])
-                    except:
-                        name = ""
-                    try :
-                        description = (elt["generic_name_fr"])
-                    except:
-                        description = ""
-                    try :
-                        nutriscore = (elt["nutrition_grade_fr"])
-                    except:
-                        nutriscore = ""
-                    try :
-                        stores = (elt["stores"])
-                    except:
-                        stores = ""
-                    try :
-                        url_off = (elt["url"])
-                    except:
-                        url_off = ""
+                    name = self.get_data('product_name_fr', elt)
+                    description = self.get_data('generic_name_fr', elt)
+                    nutriscore = self.get_data('nutrition_grade_fr', elt)
+                    stores = self.get_data('stores', elt)
+                    url_off = self.get_data('url', elt)
 
-                    product = Product(name, description, nutriscore, stores, url_off)
+                    product = Product(name, description, nutriscore, stores,
+                                     url_off, category_object)
                     category_object.add_product(product)
-                    product.category = category_object.name
+            # for id, product in enumerate(category_object.products):
+            #     print(id, product.name)
+            self.pop.add_category(category_object)
+
+    def get_data(self, key, dic):
+        if key in dic:
+            return dic[key]
+        else:
+            return ""
+
+    def get_categories(self):
+        return self.categories
 
     # def get_products(self):
     #     while [] in self.products:
     #         self.products.remove([])
     #     return self.products
-
-    def get_categories(self):
-        return self.categories

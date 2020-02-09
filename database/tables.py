@@ -10,10 +10,10 @@ TABLES['categorie'] = (
 TABLES['aliment'] = (
     "CREATE TABLE IF NOT EXISTS `aliment` ("
     "  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,"
-    "  `nom` VARCHAR(100),"
+    "  `nom` VARCHAR(250),"
     "  `nutriscore` CHAR(1),"
     "  `description` TEXT,"
-    "  `magasin` VARCHAR(50),"
+    "  `magasin` TEXT,"
     "  `lien_openfoodfacts` TEXT,"
     "  `id_categorie` MEDIUMINT UNSIGNED NOT NULL DEFAULT 1,"
     "  PRIMARY KEY (`id`)"

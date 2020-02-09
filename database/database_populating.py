@@ -1,28 +1,24 @@
 import sys
 import mysql.connector
 
+sys.path.append("..")
+
 from database.database_setup import DatabaseSetup
 from mysql.connector import errorcode
 
-sys.path.append("..")
-
-from API.data_from_api import DataFromApi
-
 class DatabasePopulating:
     def __init__(self):
-        self.data = DataFromApi()
         self.dbsetup = DatabaseSetup()
         self.dbsetup.connect('localhost', 'student', 'password')
         self.dbsetup.use_db('purbeurre')
 
-    def populate(self):
-        for category in self.data.get_categories():
-            category_id = self.add_category_in_db(category)
-            print(category_id)
+    def populate(self, category):
+        for category in categories:
+            category_id = create_category(category)
             for product in category.products:
-                self.add_product_in_db(product, category_id)
+                create_product(product, category_id)
 
-    def add_category_in_db(self, category):
+    def add_category(self, category):
         try:
             self.dbsetup.cursor.execute("INSERT INTO categorie (nom) "
                "VALUES ('{}')".format(category.name))
@@ -35,42 +31,54 @@ class DatabasePopulating:
             for category_id in self.dbsetup.cursor:
                 category_id = category_id[0]
 
-            print('added_category_id : ', category_id)
-            return category_id
+            for product in category.products:
+                elements = (product.name,
+                            product.nutriscore,
+                            product.description,
+                            product.stores,
+                            product.url,
+                            category_id)
+                add_aliment = (
+                "INSERT INTO aliment "
+                "(nom, nutriscore, description, magasin, lien_openfoodfacts, id_categorie) "
+                "VALUES (%s, %s, %s, %s, %s, %s)"
+                )
+                self.dbsetup.cursor.execute(add_aliment, elements)
             self.dbsetup.db.commit()
         except mysql.connector.Error as err:
             print("problème lors de l'insertion des catégories")
             print(err.msg)
 
-    def add_product_in_db(self, product, category_id):
+    def add_research(self, id_aliment, id_substitut):
         try:
-            elements = (product.name,
-                        product.nutriscore,
-                        product.description,
-                        product.stores,
-                        product.url,
-                        category_id)
-            print('elements = ', elements)
-            add_aliment = (
-            "INSERT INTO aliment "
-            "(nom, nutriscore, description, magasin, lien_openfoodfacts, id_categorie) "
-            "VALUES (%s, %s, %s, %s, %s, %s)"
-            )
-            self.dbsetup.cursor.execute(add_aliment, elements)
+            insert_research = ("INSERT INTO recherche "
+                                        "(date, id_aliment, id_substitut) "
+                                        "VALUES (now(), {}, {})".format(
+                                        id_aliment, id_substitut
+                                        ))
+            self.dbsetup.cursor.execute(insert_research)
             self.dbsetup.db.commit()
+            print("\nRecherche enregistrée !")
         except mysql.connector.Error as err:
-            print("problème lors de l'insertion des aliments")
             print(err.msg)
-        except IndexError:
-            print("IndexError")
 
-    def show_categories(self):
-        for data in self.data.get_categories():
-            print(data)
+    def display_researches(self):
+        full_request = ("SELECT ali.nom, ali.nutriscore, ali.description, "
+                        "ali.magasin, ali.lien_openfoodfacts, "
+                        "sub.nom, sub.nutriscore, "
+                        "sub.description, sub.magasin, sub.lien_openfoodfacts, "
+                        "date "
+                        "FROM recherche "
+                        "INNER JOIN aliment as ali "
+                        "ON recherche.id_aliment = ali.id "
+                        "INNER JOIN aliment as sub "
+                        "ON recherche.id_substitut = sub.id")
 
-    def show_table_content(self, table_name):
-        show_content_request = ("SELECT * FROM {}".format(table_name))
-        self.dbsetup.cursor.execute(show_content_request)
-
+        self.dbsetup.cursor.execute(full_request)
         for id, elt in enumerate(self.dbsetup.cursor):
-            print(id, elt)
+            print("\n", elt[10], "\n", id, "Produit recherché : ", *elt[0:5],
+                  "\n", id, "Substitut trouvé  : ", *elt[5:10], sep=' - ')
+
+            # print("\n", id, "Produit recherché : ", elt[0], elt[1], elt[2],
+            #       elt[3], elt[4], "\n", "Substitut trouvé : ", elt[10], elt[5],
+            #       elt[6], elt[7], elt[8], elt[9], sep=' - ')
