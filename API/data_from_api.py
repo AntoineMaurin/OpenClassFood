@@ -2,11 +2,12 @@ import requests
 import json
 import sys
 
-sys.path.append("..")
-
 from database.database_populating import DatabasePopulating
 from models.category import Category
 from models.product import Product
+
+sys.path.append("..")
+
 
 class DataFromApi:
 
@@ -33,9 +34,10 @@ class DataFromApi:
 
                 try:
                     response = requests.get(incremented_url,
-                    headers={
-                    'User-Agent' : 'OpenFoodRooms - windows/mac - Version 1.0'
-                    })
+                                            headers={'User-Agent':
+                                                     "OpenFoodRooms - "
+                                                     "windows/mac - "
+                                                     "Version 1.0"})
                     print(response.status_code)
                     assert response.status_code < 400
                 except AssertionError:
@@ -48,7 +50,6 @@ class DataFromApi:
                 data = json_response["products"]
 
                 if json_response["products"] == []:
-                    print(json_response["products"])
                     break
 
                 for elt in data:
@@ -59,7 +60,7 @@ class DataFromApi:
                     url_off = self.get_data('url', elt)
 
                     product = Product(name, description, nutriscore, stores,
-                                     url_off, category_object)
+                                      url_off, category_object)
                     category_object.add_product(product)
             # for id, product in enumerate(category_object.products):
             #     print(id, product.name)

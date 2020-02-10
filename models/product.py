@@ -1,5 +1,6 @@
 from database.database_setup import DatabaseSetup
 
+
 class Product:
     def __init__(self, name, description, nutriscore, stores, url, category):
         self.name = name
@@ -34,9 +35,8 @@ class Product:
             substitute_store = store
             substitute_url = url_off
             substitute_category = cat_id
-
             substitute = Product(substitute_name, substitute_description,
-                                 substitute_nutriscore, substitute_store, 
+                                 substitute_nutriscore, substitute_store,
                                  substitute_url, substitute_category)
             substitute.id = id
         return substitute

@@ -1,12 +1,10 @@
 import sys
 
-sys.path.append("..")
-
-import mysql.connector
-from mysql.connector import errorcode
-
 from database.database_setup import DatabaseSetup
 from models.product import Product
+
+sys.path.append("..")
+
 
 class Category:
     def __init__(self, name):
@@ -25,38 +23,38 @@ class Category:
         self.dbsetup.connect('localhost', 'student', 'password')
         self.dbsetup.use_db('purbeurre')
 
-    def get_all(cls):
-        cls.connect_to_db()
+    def get_all(self):
+        self.connect_to_db()
         categories = []
-        cls.dbsetup.cursor.execute("SELECT id, nom FROM categorie")
-        for id, name in cls.dbsetup.cursor:
+        self.dbsetup.cursor.execute("SELECT id, nom FROM categorie")
+        for id, name in self.dbsetup.cursor:
             category = Category(name)
             categories.append(category)
         return categories
 
-    def get_products_from_category(cls, category):
-        cls.connect_to_db()
+    def get_products_from_category(self, category):
+        self.connect_to_db()
         products = []
         get_category_id = ("SELECT id FROM categorie "
-                                    "WHERE nom = '{}'".format(category.name))
-        cls.dbsetup.cursor.execute(get_category_id)
+                           "WHERE nom = '{}'".format(category.name))
+        self.dbsetup.cursor.execute(get_category_id)
 
-        for id in cls.dbsetup.cursor:
+        for id in self.dbsetup.cursor:
             category_id = id[0]
 
         get_products_infos = ("SELECT id, nom, description, nutriscore,"
                               "magasin, lien_openfoodfacts, id_categorie "
                               "FROM aliment WHERE "
                               "id_categorie = {}".format(category_id))
-        cls.dbsetup.cursor.execute(get_products_infos)
+        self.dbsetup.cursor.execute(get_products_infos)
 
-        for id, name, desc, ntsc, store, url_off, cat_id in cls.dbsetup.cursor:
+        for id, name, desc, ntsc, store, url, cat_id in self.dbsetup.cursor:
             if name and ntsc:
                 product_name = name
                 product_description = desc
                 product_nutriscore = ntsc
                 product_store = store
-                product_url = url_off
+                product_url = url
                 product_category = cat_id
                 product = Product(product_name, product_description,
                                   product_nutriscore, product_store,

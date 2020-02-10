@@ -1,12 +1,9 @@
 import sys
 
+from models.category import Category
+
 sys.path.append("..")
 
-import mysql.connector
-from mysql.connector import errorcode
-
-from models.category import Category
-from models.product import Product
 
 class UiInteraction:
     def __init__(self):

@@ -1,7 +1,7 @@
 import mysql.connector
 
 from database.tables import TABLES
-from mysql.connector import errorcode
+
 
 class DatabaseSetup:
 
@@ -11,25 +11,26 @@ class DatabaseSetup:
     def connect(self, host, user, password):
         try:
             self.db = mysql.connector.connect(host=host,
-                                     user=user,
-                                     passwd=password,
-                                     buffered=True)
+                                              user=user,
+                                              passwd=password,
+                                              buffered=True)
             self.cursor = self.db.cursor()
-        except:
-            print("Something went wrong in the connexion process")
+        except mysql.connector.Error as err:
+            print("Something went wrong in the connexion process\n", err.msg)
             self.db.close()
 
     def use_db(self, name):
         try:
             self.cursor.execute("USE {}".format(name))
-        except:
-            print("Can not USE purbeurre database")
+        except mysql.connector.Error as err:
+            print("Can not USE purbeurre database\n", err.msg)
 
     def create_database(self, name):
         try:
             self.cursor.execute("DROP DATABASE IF EXISTS purbeurre")
             print("database dropped")
-            self.cursor.execute("CREATE DATABASE purbeurre CHARACTER SET 'utf8'")
+            self.cursor.execute("CREATE DATABASE purbeurre "
+                                "CHARACTER SET 'utf8'")
             print("database created successfully !")
             self.use_db(name)
             self.create_tables()
@@ -74,26 +75,24 @@ class DatabaseSetup:
 
     def add_foreign_keys(self):
         try:
-            self.cursor.execute(
-            "ALTER TABLE `aliment`"
-            "ADD CONSTRAINT `fk_aliment_categorie` FOREIGN KEY (`id_categorie`)"
-            "   REFERENCES `categorie` (`id`) ON DELETE CASCADE"
-            )
+            self.cursor.execute("ALTER TABLE `aliment` "
+                                "ADD CONSTRAINT `fk_aliment_categorie` "
+                                "FOREIGN KEY (`id_categorie`) "
+                                "REFERENCES `categorie` (`id`) "
+                                "ON DELETE CASCADE")
         except mysql.connector.Error as err:
             print(err.msg)
         try:
-            self.cursor.execute(
-            "ALTER TABLE `recherche`"
-            "ADD CONSTRAINT `fk_id_aliment_aliment` FOREIGN KEY (`id_aliment`)"
-            "   REFERENCES `aliment` (`id`)"
-            )
+            self.cursor.execute("ALTER TABLE `recherche` "
+                                "ADD CONSTRAINT `fk_id_aliment_aliment` "
+                                "FOREIGN KEY (`id_aliment`) "
+                                "REFERENCES `aliment` (`id`)")
         except mysql.connector.Error as err:
             print(err.msg)
         try:
-            self.cursor.execute(
-            "ALTER TABLE `recherche`"
-            "ADD CONSTRAINT `fk_id_substitut_aliment` FOREIGN KEY (`id_substitut`)"
-            "   REFERENCES `aliment` (`id`)"
-            )
+            self.cursor.execute("ALTER TABLE `recherche` "
+                                "ADD CONSTRAINT `fk_id_substitut_aliment` "
+                                "FOREIGN KEY (`id_substitut`) "
+                                "REFERENCES `aliment` (`id`)")
         except mysql.connector.Error as err:
             print(err.msg)

@@ -1,5 +1,4 @@
 from database.database_setup import DatabaseSetup
-from database.database_populating import DatabasePopulating
 from API.data_from_api import DataFromApi
 
 setup = DatabaseSetup()
