@@ -1,8 +1,8 @@
 """User Interface"""
 
 
-from database.ui_interaction import UiInteraction
 from database.database_populating import DatabasePopulating
+from models.category import Category
 
 
 # This function makes sure the input is convertible to an int and
@@ -14,6 +14,8 @@ def ask_safely(question, max):
             response = int(response)
             assert response >= 1 and response <= max
             break
+        except AssertionError:
+            response = input(question)
         except ValueError:
             response = input(question)
     return response
@@ -27,8 +29,6 @@ def display_correctly(iterable):
         id += 1
         choices.append((id, elt))
         print(id, elt.name, sep=' | ')
-        if id > 11:
-            break
     return choices
 
 
@@ -40,51 +40,78 @@ def get_response(choices, response):
     return chosen
 
 
+def back_or_quit():
+    back_or_quit = ask_safely("\n1. Accueil"
+                              "\n2. Quitter\n"
+                              "\nRetour à l'accueil ou quitter ? ",
+                              2)
+    if back_or_quit == 1:
+        print("\nRetour à l'accueil\n")
+        return False
+    else:
+        print("\nFermeture du programme")
+        return True
+
+
 def main():
     # Database and models connexion
-    interact = UiInteraction()
     db_pop = DatabasePopulating()
     # Display informations and options choice
+
     print("\nBonjour ! Bienvenue sur OpenFoodRooms !\n"
           "Attention, certains produits sont incomplets "
           "Leurs données ne sont donc pas fiables.\n"
-          "\nChoisissez une option en entrant le nombre associé à celle-ci\n"
-          "\n1. Choisir une catégorie d'aliment que vous souhaitez remplacer\n"
-          "2. Voir mes aliments substitués\n")
+          "\nChoisissez une option en entrant le nombre associé à celle-ci\n")
 
-    # Asking safely the first question
-    response = ask_safely("Quelle option choisissez-vous ? ", 2)
+    while True:
+        print("1. Choisir une catégorie d'aliment que je souhaite remplacer\n"
+              "2. Voir mes aliments substitués\n")
 
-    # Option 1
-    if response == 1:
-        # display categories
-        choices = display_correctly(interact.get_categories())
-        # ask for the category choice
-        response = ask_safely("\nQuelle catégorie choisissez-vous ? ", 10)
-        chosen_category = get_response(choices, response)
-        print('\nCatégorie choisie  : ', chosen_category.name, "\n")
+        # Asking safely the first question
+        response = ask_safely("Quelle option choisissez-vous ? ", 2)
 
-        # display products inside category
-        choices = display_correctly(interact.get_products(chosen_category))
-        response = ask_safely("\nChoisissez un aliment ", 12)
-        chosen_product = get_response(choices, response)
-        # print('\nProduit choisi  : ', chosen_product.name, "\n")
-        print("\nProduit choisi : \n", chosen_product.name,
-              chosen_product.nutriscore, chosen_product.description,
-              chosen_product.stores, chosen_product.url, sep=' | ')
+        # Option 1
+        if response == 1:
 
-        # Ask database better product and display result of actual research
-        substitute = interact.get_substitute(chosen_product)
-        print("\nSubstitut : \n", substitute.name, substitute.nutriscore,
-              substitute.description, substitute.stores, substitute.url,
-              sep=' | ')
+            categories = Category.get_all()
+            choices = display_correctly(categories)
 
-        # Storage product and substitute in 'favoris'
-        db_pop.add_research(chosen_product.id, substitute.id)
+            response = ask_safely("\nQuelle catégorie choisissez-vous ? ", 10)
+            chosen_category = get_response(choices, response)
+            print('\nCatégorie choisie  : ', chosen_category.name, "\n")
 
-        # Choice 2 : display ancient researches and result
-    else:
-        db_pop.display_researches()
+            products = chosen_category.get_products()
+            choices = display_correctly(products)
+            response = ask_safely("\nChoisissez un aliment ", 12)
+            chosen_product = get_response(choices, response)
+            # print('\nProduit choisi  : ', chosen_product.name, "\n")
+            print("\nProduit choisi : \n", chosen_product.name,
+                  chosen_product.nutriscore, chosen_product.description,
+                  chosen_product.stores, chosen_product.url, sep=' | ')
+
+            # Ask database better product and display result of actual research
+            substitute = chosen_product.get_substitute()
+            print("\nSubstitut : \n", substitute.name, substitute.nutriscore,
+                  substitute.description, substitute.stores, substitute.url,
+                  sep=' | ')
+
+            # Storage product and substitute in 'favoris'
+            final_choice = ask_safely("\n1. Oui"
+                                      "\n2. Non\n"
+                                      "\nEnregistrer la recherche ? ",
+                                      2)
+            if final_choice == 1:
+                db_pop.add_research(chosen_product.id, substitute.id)
+            else:
+                print("Recherche non enregistrée")
+
+            if back_or_quit():
+                break
+
+        else:
+            db_pop.display_researches()
+            if back_or_quit():
+                break
 
 
 if __name__ == '__main__':

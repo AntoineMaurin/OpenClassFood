@@ -1,22 +1,15 @@
 import sys
 import mysql.connector
 
-from database.database_setup import DatabaseSetup
+from database.database_request import DatabaseRequest
 
 sys.path.append("..")
 
 
 class DatabasePopulating:
     def __init__(self):
-        self.dbsetup = DatabaseSetup()
-        self.dbsetup.connect('localhost', 'student', 'password')
+        self.dbsetup = DatabaseRequest()
         self.dbsetup.use_db('purbeurre')
-
-    # def populate(self, category):
-    #     for category in categories:
-    #         category_id = create_category(category)
-    #         for product in category.products:
-    #             create_product(product, category_id)
 
     def add_category(self, category):
         try:
@@ -27,9 +20,13 @@ class DatabasePopulating:
                                    "WHERE nom = ('{}')".format(category.name))
 
             self.dbsetup.cursor.execute(category_id_request)
+        except mysql.connector.Error as err:
+            print("problème lors de l'insertion des catégories")
+            print(err.msg)
 
+        try:
             for category_id in self.dbsetup.cursor:
-                category_id = category_id[0]
+                category.id = category_id[0]
 
             for product in category.products:
                 elements = (product.name,
@@ -37,7 +34,7 @@ class DatabasePopulating:
                             product.description,
                             product.stores,
                             product.url,
-                            category_id)
+                            category.id)
                 add_aliment = ("INSERT INTO aliment "
                                "(nom, nutriscore, description, magasin, "
                                " lien_openfoodfacts, id_categorie) "
@@ -45,7 +42,7 @@ class DatabasePopulating:
                 self.dbsetup.cursor.execute(add_aliment, elements)
             self.dbsetup.db.commit()
         except mysql.connector.Error as err:
-            print("problème lors de l'insertion des catégories")
+            print("problème lors de l'insertion des aliments")
             print(err.msg)
 
     def add_research(self, id_aliment, id_substitut):
