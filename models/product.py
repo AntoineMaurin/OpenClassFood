@@ -10,10 +10,9 @@ class Product:
         self.stores = stores
         self.url = url
         self.category = category
-        self.brand = ""
 
     def get_substitute(self):
-        self.db_rq = Database_Request()
+        self.db_rq = DatabaseRequest()
         result = self.db_rq.get_substitute(self)
         substitute_name = result[1]
         substitute_description = result[2]

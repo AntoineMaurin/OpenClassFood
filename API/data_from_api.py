@@ -29,7 +29,7 @@ class DataFromApi:
                                              "OpenFoodRooms - "
                                              "windows/mac - "
                                              "Version 1.0"})
-            print(response.status_code)
+            # print(response.status_code)
             assert response.status_code < 400
         except AssertionError:
             print("Bad status code")
@@ -68,10 +68,8 @@ class DataFromApi:
         nutriscore = self.get_data('nutrition_grade_fr', dict)
         stores = self.get_data('stores', dict)
         url_off = self.get_data('url', dict)
-        brands = self.get_data('brands', dict)
         product = Product(name, description, nutriscore, stores, url_off,
                           category_object)
-        product.brand = brands
         return product
 
     def get_data(self, key, dict):

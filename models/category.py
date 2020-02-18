@@ -17,7 +17,7 @@ class Category:
 
     @classmethod
     def get_all(cls):
-        cls.db_rq = Database_Request()
+        cls.db_rq = DatabaseRequest()
         categories = []
         for elt in cls.db_rq.get_categories():
             id = elt[0]
@@ -27,7 +27,7 @@ class Category:
         return categories
 
     def get_products(self):
-        self.db_rq = Database_Request()
+        self.db_rq = DatabaseRequest()
         products = []
         for elt in self.db_rq.get_products_from_category(self):
             product_name = elt[1]

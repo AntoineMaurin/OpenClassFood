@@ -9,15 +9,14 @@ sys.path.append("..")
 class DatabasePopulating:
     def __init__(self):
         self.dbsetup = DatabaseRequest()
-        self.dbsetup.use_db('purbeurre')
 
     def add_category(self, category):
         try:
             self.dbsetup.cursor.execute("INSERT INTO categorie (nom) "
-                                        "VALUES ('{}')".format(category.name))
+                                        "VALUES ('%s')" %category.name)
 
             category_id_request = ("SELECT id FROM categorie "
-                                   "WHERE nom = ('{}')".format(category.name))
+                                   "WHERE nom = ('%s')" %category.name)
 
             self.dbsetup.cursor.execute(category_id_request)
         except mysql.connector.Error as err:
@@ -49,8 +48,8 @@ class DatabasePopulating:
         try:
             insert_research = ("INSERT INTO recherche "
                                "(date, id_aliment, id_substitut) "
-                               "VALUES (now(), {}, {})".format(id_aliment,
-                                                               id_substitut))
+                               "VALUES (now(), %s, %s)" %(id_aliment,
+                                                          id_substitut))
             self.dbsetup.cursor.execute(insert_research)
             self.dbsetup.db.commit()
             print("\nRecherche enregistrée !")

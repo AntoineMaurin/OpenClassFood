@@ -1,9 +1,11 @@
 TABLES = {}
 
-TABLES['categorie'] = (
-    "CREATE TABLE IF NOT EXISTS `categorie` ("
+TABLES['recherche'] = (
+    "CREATE TABLE IF NOT EXISTS `recherche` ("
     "  `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,"
-    "  `nom` VARCHAR(50) UNIQUE,"
+    "  `date` DATETIME NOT NULL,"
+    "  `id_aliment` INT UNSIGNED NOT NULL,"
+    "  `id_substitut` INT UNSIGNED NOT NULL,"
     "  PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB")
 
@@ -15,15 +17,13 @@ TABLES['aliment'] = (
     "  `description` TEXT,"
     "  `magasin` TEXT,"
     "  `lien_openfoodfacts` TEXT,"
-    "  `id_categorie` MEDIUMINT UNSIGNED NOT NULL DEFAULT 1,"
+    "  `id_categorie` MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,"
     "  PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB")
 
-TABLES['recherche'] = (
-    "CREATE TABLE IF NOT EXISTS `recherche` ("
+TABLES['categorie'] = (
+    "CREATE TABLE IF NOT EXISTS `categorie` ("
     "  `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,"
-    "  `date` DATETIME NOT NULL,"
-    "  `id_aliment` INT UNSIGNED NOT NULL,"
-    "  `id_substitut` INT UNSIGNED NOT NULL,"
+    "  `nom` VARCHAR(50) UNIQUE,"
     "  PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB")

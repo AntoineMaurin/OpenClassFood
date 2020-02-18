@@ -1,74 +1,53 @@
 import mysql.connector
 
 from database.tables import TABLES
-
+from config import DB_CONFIG
 
 class DatabaseRequest:
 
     def __init__(self):
         try:
-            self.db = mysql.connector.connect(host='localhost',
-                                              user='student',
-                                              passwd='password',
-                                              buffered=True)
+            self.db = mysql.connector.connect(host=DB_CONFIG['host'],
+                                              user=DB_CONFIG['user'],
+                                              passwd=DB_CONFIG['password'])
             self.cursor = self.db.cursor()
-            self.use_db('purbeurre')
+            self.use_db(DB_CONFIG['db_name'])
         except mysql.connector.Error as err:
             print("Something went wrong in the connexion process\n", err.msg)
             self.db.close()
 
     def use_db(self, name):
         try:
-            self.cursor.execute("USE {}".format(name))
+            self.cursor.execute("USE %s" %name)
         except mysql.connector.Error as err:
             print("Can not USE purbeurre database\n", err.msg)
 
-    def create_database(self, name):
-        try:
-            self.cursor.execute("DROP DATABASE IF EXISTS purbeurre")
-            print("database dropped")
-            self.cursor.execute("CREATE DATABASE purbeurre "
-                                "CHARACTER SET 'utf8'")
-            print("database created successfully !")
-            self.use_db(name)
-            self.create_tables()
-            print("all tables created successfully !")
-        except mysql.connector.Error as err:
-            print(err.msg)
-
-    def does_db_exist(self, name):
-        databases = []
-        self.cursor.execute("SHOW DATABASES")
-        for db in self.cursor:
-            db = db[0]
-            databases.append(db)
-
-        print('databases : ', databases)
-        return name in databases
-
-    def does_tb_exist(self, table):
-        tables = []
-        self.cursor.execute("SHOW TABLES")
-        for tb in self.cursor:
-            tb = tb[0]
-            tables.append(tb)
-
-        print('tables : ', tables)
-        return table in tables
+    # def create_database(self, name):
+    #     try:
+    #         self.cursor.execute("DROP DATABASE IF EXISTS {}".format(name))
+    #         print("database dropped")
+    #         self.cursor.execute("CREATE DATABASE {} "
+    #                             "CHARACTER SET 'utf8'".format(name))
+    #         print("database created successfully !")
+    #         self.use_db(name)
+    #         self.create_tables()
+    #         print("all tables created successfully !")
+    #     except mysql.connector.Error as err:
+    #         print(err.msg)
 
     def create_tables(self):
         for table_name in TABLES:
             table_description = TABLES[table_name]
-            if self.does_tb_exist(table_name):
-                print("the table {} already exists".format(table_name))
+            print("the table {} already exists".format(table_name))
+            self.cursor.execute("DROP TABLE IF EXISTS %s" %table_name)
+            print("table %s deleted" %table_name)
+            try:
+                print("Creating table {}: ".format(table_name))
+                self.cursor.execute(table_description)
+            except mysql.connector.Error as err:
+                print(err.msg)
             else:
-                try:
-                    print("Creating table {}: ".format(table_name))
-                    self.cursor.execute(table_description)
-                except mysql.connector.Error as err:
-                    print(err.msg)
-                else:
-                    print("OK")
+                print("OK")
         self.add_foreign_keys()
 
     def add_foreign_keys(self):
@@ -120,10 +99,10 @@ class DatabaseRequest:
         get_products_infos = ("SELECT id, nom, description, nutriscore,"
                               "magasin, lien_openfoodfacts "
                               "FROM aliment WHERE "
-                              "id_categorie = {} "
+                              "id_categorie = %s "
                               "AND nom != '' "
                               "AND nutriscore != '' "
-                              "LIMIT 12".format(category.id))
+                              "LIMIT 12" %category.id)
         self.cursor.execute(get_products_infos)
         for product in self.cursor:
             products.append(product)

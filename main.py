@@ -40,7 +40,7 @@ def get_response(choices, response):
     return chosen
 
 
-def back_or_quit():
+def quit_or_not():
     back_or_quit = ask_safely("\n1. Accueil"
                               "\n2. Quitter\n"
                               "\nRetour à l'accueil ou quitter ? ",
@@ -105,12 +105,12 @@ def main():
             else:
                 print("Recherche non enregistrée")
 
-            if back_or_quit():
+            if quit_or_not():
                 break
 
         else:
             db_pop.display_researches()
-            if back_or_quit():
+            if quit_or_not():
                 break
 
 
