@@ -1,5 +1,10 @@
 from database.database_request import DatabaseRequest
 
+"""This class makes product objects from the products in the database, so its
+attributes are the fields of the product table, and it has a method to get a
+substitute, that calls the method get_substitute() from the DatabaseRequest
+class"""
+
 
 class Product:
     def __init__(self, name, description, nutriscore, stores, url, category):

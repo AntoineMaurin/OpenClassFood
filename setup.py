@@ -1,7 +1,7 @@
-from database.database_request import DatabaseRequest
+from database.database_populating import DatabasePopulating
 from API.data_from_api import DataFromApi
 
-setup = DatabaseRequest()
+setup = DatabasePopulating()
 data = DataFromApi()
 
 setup.create_tables()

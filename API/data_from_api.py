@@ -8,6 +8,14 @@ from models.product import Product
 
 sys.path.append("..")
 
+"""This class sends requests to the urls in urls.txt to get the category of
+products present on the url and these fields for each product :
+product_name_fr, generic_name_fr, nutrition_grade_fr, stores, url
+and then turn those fields into a Product object, and the category into a
+Category object. When it's done for all products in a category, the category
+object is sent to the class DatabasePopulating to fill the database with the
+category and all the products it contains."""
+
 
 class DataFromApi:
 

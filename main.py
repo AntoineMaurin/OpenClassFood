@@ -1,62 +1,14 @@
 """User Interface"""
 
-
+from client_interaction.client_interface import ClientInterface
 from database.database_populating import DatabasePopulating
 from models.category import Category
 
 
-# This function makes sure the input is convertible to an int and
-# between 0 and the max set
-def ask_safely(question, max):
-    response = input(question)
-    while True:
-        try:
-            response = int(response)
-            assert response >= 1 and response <= max
-            break
-        except AssertionError:
-            response = input(question)
-        except ValueError:
-            response = input(question)
-    return response
-
-
-# This function displays the name each element of an iterable separated
-# with a | symbol
-def display_correctly(iterable):
-    choices = []
-    for id, elt in enumerate(iterable):
-        id += 1
-        choices.append((id, elt))
-        print(id, elt.name, sep=' | ')
-    return choices
-
-
-# This function returns the element bound to the number entered by user
-def get_response(choices, response):
-    for elt in choices:
-        if elt[0] == response:
-            chosen = elt[1]
-    return chosen
-
-
-def quit_or_not():
-    back_or_quit = ask_safely("\n1. Accueil"
-                              "\n2. Quitter\n"
-                              "\nRetour à l'accueil ou quitter ? ",
-                              2)
-    if back_or_quit == 1:
-        print("\nRetour à l'accueil\n")
-        return False
-    else:
-        print("\nFermeture du programme")
-        return True
-
-
 def main():
-    # Database and models connexion
+
     db_pop = DatabasePopulating()
-    # Display informations and options choice
+    interact = ClientInterface()
 
     print("\nBonjour ! Bienvenue sur OpenFoodRooms !\n"
           "Attention, certains produits sont incomplets "
@@ -68,22 +20,23 @@ def main():
               "2. Voir mes aliments substitués\n")
 
         # Asking safely the first question
-        response = ask_safely("Quelle option choisissez-vous ? ", 2)
+        response = interact.ask_safely("Quelle option choisissez-vous ? ", 2)
 
         # Option 1
         if response == 1:
 
             categories = Category.get_all()
-            choices = display_correctly(categories)
+            choices = interact.display_correctly(categories)
 
-            response = ask_safely("\nQuelle catégorie choisissez-vous ? ", 10)
-            chosen_category = get_response(choices, response)
+            response = interact.ask_safely(
+                                "\nQuelle catégorie choisissez-vous ? ", 10)
+            chosen_category = interact.get_response(choices, response)
             print('\nCatégorie choisie  : ', chosen_category.name, "\n")
 
             products = chosen_category.get_products()
-            choices = display_correctly(products)
-            response = ask_safely("\nChoisissez un aliment ", 12)
-            chosen_product = get_response(choices, response)
+            choices = interact.display_correctly(products)
+            response = interact.ask_safely("\nChoisissez un aliment ", 12)
+            chosen_product = interact.get_response(choices, response)
             # print('\nProduit choisi  : ', chosen_product.name, "\n")
             print("\nProduit choisi : \n", chosen_product.name,
                   chosen_product.nutriscore, chosen_product.description,
@@ -96,21 +49,21 @@ def main():
                   sep=' | ')
 
             # Storage product and substitute in 'favoris'
-            final_choice = ask_safely("\n1. Oui"
-                                      "\n2. Non\n"
-                                      "\nEnregistrer la recherche ? ",
-                                      2)
+            final_choice = interact.ask_safely("\n1. Oui"
+                                               "\n2. Non\n"
+                                               "\nEnregistrer la recherche ? ",
+                                               2)
             if final_choice == 1:
                 db_pop.add_research(chosen_product.id, substitute.id)
             else:
                 print("Recherche non enregistrée")
 
-            if quit_or_not():
+            if interact.quit_or_not():
                 break
 
         else:
             db_pop.display_researches()
-            if quit_or_not():
+            if interact.quit_or_not():
                 break
 
 

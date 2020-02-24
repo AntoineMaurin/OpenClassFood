@@ -5,6 +5,10 @@ from models.product import Product
 
 sys.path.append("..")
 
+"""This class is used to make category objects from the categories in the
+database, it mainly has a list attribute self.products which contains the
+products of a category, and a class method to get them all from the database"""
+
 
 class Category:
     def __init__(self, id, name):
